@@ -10,7 +10,7 @@ import SwiftUI
 class Constants {
 
     class Strings {
-        static let city = "Minsk"
+        static let city = "Toronto"
         static let keyAPI = "e286a159a583b9251688d27bebc25783"
         static let url = "https://api.openweathermap.org/data/2.5"
         static let windSpeed = "Wind speed"

@@ -6,14 +6,24 @@
 //
 
 import Foundation
+import Combine
 
-struct WeatherApi {
+class WeatherService {
     static let key = Constants.Strings.keyAPI
+    let client: APIClientFetchable
+    
+    init(client: APIClientFetchable = APIClient()) {
+        self.client = client
+    }
+    
+    func fetchWeatherData(for latitude: Double, longitude: Double) -> AnyPublisher<WeatherResponse, Error> {
+        client.fetch(request: APIType.weatherData(latitude: latitude, longitude: longitude))
+    }
 }
 
-extension WeatherApi {
+extension WeatherService {
     static let baseURL = Constants.Strings.url
-
+    
     static func getCurrentWeatherURL(latitude: Double, longitude: Double) -> String {
         let excludeFields = "minutely"
         return "\(baseURL)/onecall?lat=\(latitude)&lon=\(longitude)&appid=\(key)&exclude=\(excludeFields)&units=metric"
