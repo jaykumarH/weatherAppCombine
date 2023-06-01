@@ -49,6 +49,6 @@ struct SearchCityView: View {
 
 struct SearchCityView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        HomeView()
     }
 }

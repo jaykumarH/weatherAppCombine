@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreLocation
+import Combine
 
 final class WeatherViewModel: ObservableObject {
     @Published var weather = WeatherResponse.empty()
