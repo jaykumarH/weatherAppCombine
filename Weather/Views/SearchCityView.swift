@@ -13,23 +13,23 @@ struct SearchCityView: View {
     
     var body: some View {
         HStack {
-            VStack(spacing: 4.0) {
+            VStack(alignment: .leading, spacing: 4.0) {
                 TextField(
-                    "",
-                    text: $startCity,
-                    onEditingChanged: { _ in
-                        if !weatherViewModel.cityNameErrorMessage.isEmpty {
-                            weatherViewModel.cityNameErrorMessage = ""
-                        }
-                    }
+                    "Enter city name",
+                    text: $startCity
                 )
-                .padding(.leading, 50)
+                .onChange(of: startCity, perform: { _ in
+                    if !weatherViewModel.cityNameErrorMessage.isEmpty {
+                        weatherViewModel.cityNameErrorMessage = ""
+                    }
+                })
                 .font(.system(size: Constants.Font.mediumSize))
                 
                 Text(weatherViewModel.cityNameErrorMessage)
                     .font(.system(size: 14.0))
                     .foregroundStyle(.red)
             }
+            .padding(.leading, 50)
             
             Button {
                 weatherViewModel.city = startCity
