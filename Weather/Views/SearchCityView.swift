@@ -13,9 +13,15 @@ struct SearchCityView: View {
     
     var body: some View {
         HStack {
-            TextField("", text: $startCity)
-                .padding(.leading, 50)
-                .font(.system(size: Constants.Font.mediumSize))
+            VStack(spacing: 4.0) {
+                TextField("", text: $startCity)
+                    .padding(.leading, 50)
+                    .font(.system(size: Constants.Font.mediumSize))
+                Text(weatherViewModel.cityNameErrorMessage)
+                    .font(.system(size: 14.0))
+                    .foregroundStyle(.red)
+            }
+            
             Button {
                 weatherViewModel.city = startCity
             } label: {

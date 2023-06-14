@@ -10,16 +10,61 @@ import CoreLocation
 import Combine
 
 final class WeatherViewModel: ObservableObject {
+    
+    //MARK: - Properties
+    
+    typealias WeatherResult = Result<WeatherResponse, Error>
+    let service: WeatherServiceable
+    
     @Published var weather = WeatherResponse.empty()
-    @Published var city = Constants.Strings.city {
-        didSet {
-            getLocation()
-        }
+//    @Published var city = Constants.Strings.city {
+//        didSet {
+//            getLocation()
+//        }
+//    }
+    @Published var city = Constants.Strings.city
+    @Published var showErrorAlert: Bool = false
+    @Published var cityNameErrorMessage: String = ""
+
+    private lazy var cityNameValidPublisher: AnyPublisher<WeatherResult, Never> = {
+        $city
+            .debounce(for: 0.8, scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .print("cityName")
+            .flatMap { cityName -> AnyPublisher<WeatherResult, Never> in
+                self.service.fetchWeather(for: cityName).asResult()
+            }
+            .receive(on: DispatchQueue.main)
+            .share()
+            .eraseToAnyPublisher()
+    }()
+    
+    //MARK: - Init
+
+    init(service: WeatherServiceable = WeatherService()) {
+        self.service = service
+        cityNameValidPublisher
+            .map{ result in
+                switch result {
+                case .success(let weatherResponse):
+                    self.weather = weatherResponse
+                    return ""
+                    
+                case .failure(let error):
+                    guard let cityNameError = error as? WeatherService.ServiceError.GeoCodeAdress else {
+                        return ""
+                    }
+                    return cityNameError.message
+                }
+            }
+            .assign(to: &$cityNameErrorMessage)
     }
 
-    init() {
-        getLocation()
-    }
+//    init() {
+//        getLocation()
+//    }
+
+    //MARK: - Methods
 
     private func getLocation() {
         CLGeocoder().geocodeAddressString(city) { (placemarks, error) in
