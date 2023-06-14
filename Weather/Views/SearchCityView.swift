@@ -14,9 +14,18 @@ struct SearchCityView: View {
     var body: some View {
         HStack {
             VStack(spacing: 4.0) {
-                TextField("", text: $startCity)
-                    .padding(.leading, 50)
-                    .font(.system(size: Constants.Font.mediumSize))
+                TextField(
+                    "",
+                    text: $startCity,
+                    onEditingChanged: { _ in
+                        if !weatherViewModel.cityNameErrorMessage.isEmpty {
+                            weatherViewModel.cityNameErrorMessage = ""
+                        }
+                    }
+                )
+                .padding(.leading, 50)
+                .font(.system(size: Constants.Font.mediumSize))
+                
                 Text(weatherViewModel.cityNameErrorMessage)
                     .font(.system(size: 14.0))
                     .foregroundStyle(.red)
@@ -38,18 +47,20 @@ struct SearchCityView: View {
         }
         .foregroundColor(.white)
         .padding()
-        .background(ZStack (alignment: .leading) {
-            Image(systemName: Constants.Images.location)
-                .foregroundColor(.blue)
-                .padding(.leading, Constants.Dimensions.defaultPadding)
-            RoundedRectangle(cornerRadius: Constants.Dimensions.cornerRadius)
-                .fill(
-                    LinearGradient(
-                        gradient: Gradient(colors: Constants.Colors.gradientSerchMenu),
-                        startPoint: .topLeading, endPoint: .bottomTrailing
+        .background(
+            ZStack(alignment: .leading) {
+                Image(systemName: Constants.Images.location)
+                    .foregroundColor(.blue)
+                    .padding(.leading, Constants.Dimensions.defaultPadding)
+                RoundedRectangle(cornerRadius: Constants.Dimensions.cornerRadius)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: Constants.Colors.gradientSerchMenu),
+                            startPoint: .topLeading, endPoint: .bottomTrailing
+                        )
                     )
-                )
-        })
+            }
+        )
     }
 }
 

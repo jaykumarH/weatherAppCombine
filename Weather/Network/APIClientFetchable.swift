@@ -9,6 +9,5 @@ import Foundation
 import Combine
 
 protocol APIClientFetchable {
-    func fetch<T: Codable>(request: APIRequest, completionHandler: @escaping (Result<T, APIError>) -> Void)
     func fetch<T: Codable>(request: APIRequest) -> AnyPublisher<T, Error>
 }

@@ -64,7 +64,8 @@ struct APIClient: APIClientFetchable {
             .map(\.data)
             .tryMap { data -> T in
                 let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let string = String(decoding: data, as: UTF8.self)
+                print(string)
                 do {
                     return try decoder.decode(T.self, from: data)
                 }
@@ -73,40 +74,5 @@ struct APIClient: APIClientFetchable {
                 }
             }
             .eraseToAnyPublisher()
-    }
-    
-    func fetch<T: Codable>(
-        request: APIRequest,
-        completionHandler: @escaping (Result<T, APIError>) -> Void
-    ) {
-        let request = URLRequest(url: request.url)
-        
-        session.dataTask(with: request, completionHandler: { data, response, error in
-            
-            if let error = error {
-                completionHandler(.failure(.transport(error: error)))
-                return
-            }
-            
-            if let urlResponse = response as? HTTPURLResponse,
-               !(200...299).contains(urlResponse.statusCode) {
-                completionHandler(.failure(.invalidStatusCode))
-                return
-            }
-            
-            guard let data = data else {
-                completionHandler(.failure(.invalidData))
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            do {
-                let model = try decoder.decode(T.self, from: data)
-                completionHandler(.success(model))
-            } catch {
-                completionHandler(.failure(APIError.decodingError(error)))
-            }
-        }).resume()
     }
 }
